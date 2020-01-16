@@ -6,11 +6,9 @@ import (
 	"github.com/ProtocolONE/go-core/v2/pkg/provider"
 	u "github.com/PuerkitoBio/purell"
 	"github.com/labstack/echo/v4"
-	"github.com/paysuper/paysuper-billing-server/pkg"
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/billing"
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/grpc"
 	"github.com/paysuper/paysuper-checkout/internal/dispatcher/common"
 	"github.com/paysuper/paysuper-checkout/internal/helpers"
+	billing "github.com/paysuper/paysuper-proto/go/billingpb"
 	"net/http"
 	"time"
 )
@@ -129,17 +127,17 @@ func (h *OrderRoute) createJson(ctx echo.Context) error {
 
 	// If request contain prepared order identifier than try to get order by this identifier
 	if req.PspOrderUuid != "" {
-		req := &grpc.IsOrderCanBePayingRequest{
+		req := &billing.IsOrderCanBePayingRequest{
 			OrderId:   req.PspOrderUuid,
 			ProjectId: req.ProjectId,
 		}
 		rsp, err := h.dispatch.Services.Billing.IsOrderCanBePaying(ctxReq, req)
 
 		if err != nil {
-			return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "IsOrderCanBePaying")
+			return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "IsOrderCanBePaying")
 		}
 
-		if rsp.Status != pkg.ResponseStatusOk {
+		if rsp.Status != billing.ResponseStatusOk {
 			return echo.NewHTTPError(int(rsp.Status), rsp.Message)
 		}
 
@@ -148,7 +146,7 @@ func (h *OrderRoute) createJson(ctx echo.Context) error {
 		rsp, err := h.dispatch.Services.Billing.OrderCreateProcess(ctxReq, req)
 
 		if err != nil {
-			return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "OrderCreateProcess")
+			return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "OrderCreateProcess")
 		}
 
 		if rsp.Status != http.StatusOK {
@@ -179,7 +177,7 @@ func (h *OrderRoute) createJson(ctx echo.Context) error {
 // @param order_id path {string} true The unique identifier for the order
 // @router /api/v1/order/{order_id} [get]
 func (h *OrderRoute) getPaymentFormData(ctx echo.Context) error {
-	req := &grpc.PaymentFormJsonDataRequest{
+	req := &billing.PaymentFormJsonDataRequest{
 		Locale:  ctx.Request().Header.Get(common.HeaderAcceptLanguage),
 		Ip:      ctx.RealIP(),
 		Referer: ctx.Request().Header.Get(common.HeaderReferer),
@@ -198,7 +196,7 @@ func (h *OrderRoute) getPaymentFormData(ctx echo.Context) error {
 	res, err := h.dispatch.Services.Billing.PaymentFormJsonDataProcess(ctx.Request().Context(), req)
 
 	if err != nil {
-		return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "PaymentFormJsonDataProcess")
+		return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "PaymentFormJsonDataProcess")
 	}
 
 	if res.Status != http.StatusOK {
@@ -223,7 +221,7 @@ func (h *OrderRoute) getPaymentFormData(ctx echo.Context) error {
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
 // @router /api/v1/order/recreate [post]
 func (h *OrderRoute) recreateOrder(ctx echo.Context) error {
-	req := &grpc.OrderReCreateProcessRequest{}
+	req := &billing.OrderReCreateProcessRequest{}
 
 	if err := h.dispatch.BindAndValidate(req, ctx); err != nil {
 		return err
@@ -232,7 +230,7 @@ func (h *OrderRoute) recreateOrder(ctx echo.Context) error {
 	res, err := h.dispatch.Services.Billing.OrderReCreateProcess(ctx.Request().Context(), req)
 
 	if err != nil {
-		return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "OrderReCreateProcess")
+		return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "OrderReCreateProcess")
 	}
 
 	if res.Status != http.StatusOK {
@@ -261,7 +259,7 @@ func (h *OrderRoute) recreateOrder(ctx echo.Context) error {
 // @param order_id path {string} true The unique identifier for the order
 // @router /api/v1/orders/{order_id}/language [patch]
 func (h *OrderRoute) changeLanguage(ctx echo.Context) error {
-	req := &grpc.PaymentFormUserChangeLangRequest{
+	req := &billing.PaymentFormUserChangeLangRequest{
 		AcceptLanguage: ctx.Request().Header.Get(common.HeaderAcceptLanguage),
 		UserAgent:      ctx.Request().Header.Get(common.HeaderUserAgent),
 		Ip:             ctx.RealIP(),
@@ -274,10 +272,10 @@ func (h *OrderRoute) changeLanguage(ctx echo.Context) error {
 	res, err := h.dispatch.Services.Billing.PaymentFormLanguageChanged(ctx.Request().Context(), req)
 
 	if err != nil {
-		return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "PaymentFormLanguageChanged")
+		return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "PaymentFormLanguageChanged")
 	}
 
-	if res.Status != pkg.ResponseStatusOk {
+	if res.Status != billing.ResponseStatusOk {
 		return echo.NewHTTPError(int(res.Status), res.Message)
 	}
 
@@ -297,7 +295,7 @@ func (h *OrderRoute) changeLanguage(ctx echo.Context) error {
 // @param order_id path {string} true The unique identifier for the order
 // @router /api/v1/orders/{order_id}/customer [patch]
 func (h *OrderRoute) changeCustomer(ctx echo.Context) error {
-	req := &grpc.PaymentFormUserChangePaymentAccountRequest{
+	req := &billing.PaymentFormUserChangePaymentAccountRequest{
 		AcceptLanguage: ctx.Request().Header.Get(common.HeaderAcceptLanguage),
 		UserAgent:      ctx.Request().Header.Get(common.HeaderUserAgent),
 		Ip:             ctx.RealIP(),
@@ -310,10 +308,10 @@ func (h *OrderRoute) changeCustomer(ctx echo.Context) error {
 	res, err := h.dispatch.Services.Billing.PaymentFormPaymentAccountChanged(ctx.Request().Context(), req)
 
 	if err != nil {
-		return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "PaymentFormPaymentAccountChanged")
+		return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "PaymentFormPaymentAccountChanged")
 	}
 
-	if res.Status != pkg.ResponseStatusOk {
+	if res.Status != billing.ResponseStatusOk {
 		return echo.NewHTTPError(int(res.Status), res.Message)
 	}
 
@@ -335,7 +333,7 @@ func (h *OrderRoute) changeCustomer(ctx echo.Context) error {
 // @param order_id path {string} true The unique identifier for the order
 // @router /api/v1/orders/{order_id}/billing_address [post]
 func (h *OrderRoute) processBillingAddress(ctx echo.Context) error {
-	req := &grpc.ProcessBillingAddressRequest{
+	req := &billing.ProcessBillingAddressRequest{
 		Cookie: helpers.GetRequestCookie(ctx, common.CustomerTokenCookiesName),
 		Ip:     ctx.RealIP(),
 	}
@@ -347,10 +345,10 @@ func (h *OrderRoute) processBillingAddress(ctx echo.Context) error {
 	res, err := h.dispatch.Services.Billing.ProcessBillingAddress(ctx.Request().Context(), req)
 
 	if err != nil {
-		return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "ProcessBillingAddress")
+		return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "ProcessBillingAddress")
 	}
 
-	if res.Status != pkg.ResponseStatusOk {
+	if res.Status != billing.ResponseStatusOk {
 		return echo.NewHTTPError(int(res.Status), res.Message)
 	}
 
@@ -374,7 +372,7 @@ func (h *OrderRoute) processBillingAddress(ctx echo.Context) error {
 // @param order_id path {string} true The unique identifier for the order
 // @router /api/v1/orders/{order_id}/notify_sale [post]
 func (h *OrderRoute) notifySale(ctx echo.Context) error {
-	req := &grpc.SetUserNotifyRequest{}
+	req := &billing.SetUserNotifyRequest{}
 
 	if err := h.dispatch.BindAndValidate(req, ctx); err != nil {
 		return err
@@ -383,7 +381,7 @@ func (h *OrderRoute) notifySale(ctx echo.Context) error {
 	_, err := h.dispatch.Services.Billing.SetUserNotifySales(ctx.Request().Context(), req)
 
 	if err != nil {
-		return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "SetUserNotifySales")
+		return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "SetUserNotifySales")
 	}
 
 	return ctx.NoContent(http.StatusNoContent)
@@ -403,7 +401,7 @@ func (h *OrderRoute) notifySale(ctx echo.Context) error {
 // @param order_id path {string} true The unique identifier for the order
 // @router /api/v1/orders/{order_id}/notify_new_region [post]
 func (h *OrderRoute) notifyNewRegion(ctx echo.Context) error {
-	req := &grpc.SetUserNotifyRequest{}
+	req := &billing.SetUserNotifyRequest{}
 
 	if err := h.dispatch.BindAndValidate(req, ctx); err != nil {
 		return err
@@ -412,7 +410,7 @@ func (h *OrderRoute) notifyNewRegion(ctx echo.Context) error {
 	_, err := h.dispatch.Services.Billing.SetUserNotifyNewRegion(ctx.Request().Context(), req)
 
 	if err != nil {
-		return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "SetUserNotifyNewRegion")
+		return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "SetUserNotifyNewRegion")
 	}
 
 	return ctx.NoContent(http.StatusNoContent)
@@ -432,7 +430,7 @@ func (h *OrderRoute) notifyNewRegion(ctx echo.Context) error {
 // @param order_id path {string} true The unique identifier for the order
 // @router /api/v1/orders/{order_id}/platform [post]
 func (h *OrderRoute) changePlatform(ctx echo.Context) error {
-	req := &grpc.PaymentFormUserChangePlatformRequest{}
+	req := &billing.PaymentFormUserChangePlatformRequest{}
 
 	if err := h.dispatch.BindAndValidate(req, ctx); err != nil {
 		return err
@@ -441,10 +439,10 @@ func (h *OrderRoute) changePlatform(ctx echo.Context) error {
 	res, err := h.dispatch.Services.Billing.PaymentFormPlatformChanged(ctx.Request().Context(), req)
 
 	if err != nil {
-		return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "PaymentFormPlatformChanged")
+		return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "PaymentFormPlatformChanged")
 	}
 
-	if res.Status != pkg.ResponseStatusOk {
+	if res.Status != billing.ResponseStatusOk {
 		return echo.NewHTTPError(int(res.Status), res.Message)
 	}
 
@@ -465,7 +463,7 @@ func (h *OrderRoute) changePlatform(ctx echo.Context) error {
 // @param order_id path {string} true The unique identifier for the order
 // @router /api/v1/orders/receipt/{receipt_id}/{order_id} [get]
 func (h *OrderRoute) getReceipt(ctx echo.Context) error {
-	req := &grpc.OrderReceiptRequest{}
+	req := &billing.OrderReceiptRequest{}
 
 	if err := h.dispatch.BindAndValidate(req, ctx); err != nil {
 		return err
@@ -474,7 +472,7 @@ func (h *OrderRoute) getReceipt(ctx echo.Context) error {
 	res, err := h.dispatch.Services.Billing.OrderReceipt(ctx.Request().Context(), req)
 
 	if err != nil {
-		return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "OrderReceipt")
+		return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "OrderReceipt")
 	}
 
 	if res.Status != http.StatusOK {
@@ -500,12 +498,12 @@ func (h *OrderRoute) getOrderForPaylink(ctx echo.Context) error {
 	paylinkId := ctx.Param(common.RequestParameterId)
 
 	go func() {
-		req := &grpc.PaylinkRequestById{Id: paylinkId}
+		req := &billing.PaylinkRequestById{Id: paylinkId}
 		// call with background context to prevent request abandoning when redirect will bw returned in response below
 		_, err := h.dispatch.Services.Billing.IncrPaylinkVisits(context.Background(), req)
 
 		if err != nil {
-			common.LogSrvCallFailedGRPC(h.L(), err, pkg.ServiceName, "IncrPaylinkVisits", req)
+			common.LogSrvCallFailedGRPC(h.L(), err, billing.ServiceName, "IncrPaylinkVisits", req)
 		}
 	}()
 
@@ -525,7 +523,7 @@ func (h *OrderRoute) getOrderForPaylink(ctx echo.Context) error {
 	res, err := h.dispatch.Services.Billing.OrderCreateByPaylink(ctx.Request().Context(), req)
 
 	if err != nil {
-		common.LogSrvCallFailedGRPC(h.L(), err, pkg.ServiceName, "OrderCreateByPaylink", req)
+		common.LogSrvCallFailedGRPC(h.L(), err, billing.ServiceName, "OrderCreateByPaylink", req)
 		return ctx.Render(http.StatusBadRequest, errorTemplateName, map[string]interface{}{})
 	}
 

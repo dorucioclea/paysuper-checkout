@@ -4,10 +4,9 @@ import (
 	"github.com/ProtocolONE/go-core/v2/pkg/logger"
 	"github.com/ProtocolONE/go-core/v2/pkg/provider"
 	"github.com/labstack/echo/v4"
-	"github.com/paysuper/paysuper-billing-server/pkg"
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/grpc"
 	"github.com/paysuper/paysuper-checkout/internal/dispatcher/common"
 	"github.com/paysuper/paysuper-checkout/internal/helpers"
+	billing "github.com/paysuper/paysuper-proto/go/billingpb"
 	"net/http"
 )
 
@@ -47,7 +46,7 @@ func (h *RecurringRoute) Route(groups *common.Groups) {
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
 // @router /api/v1/saved_card [delete]
 func (h *RecurringRoute) removeSavedCard(ctx echo.Context) error {
-	req := &grpc.DeleteSavedCardRequest{
+	req := &billing.DeleteSavedCardRequest{
 		Cookie: helpers.GetRequestCookie(ctx, common.CustomerTokenCookiesName),
 	}
 
@@ -58,10 +57,10 @@ func (h *RecurringRoute) removeSavedCard(ctx echo.Context) error {
 	res, err := h.dispatch.Services.Billing.DeleteSavedCard(ctx.Request().Context(), req)
 
 	if err != nil {
-		return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "DeleteSavedCard")
+		return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "DeleteSavedCard")
 	}
 
-	if res.Status != pkg.ResponseStatusOk {
+	if res.Status != billing.ResponseStatusOk {
 		return echo.NewHTTPError(int(res.Status), res.Message)
 	}
 

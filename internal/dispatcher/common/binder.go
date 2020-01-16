@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/labstack/echo/v4"
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/billing"
+	billing "github.com/paysuper/paysuper-proto/go/billingpb"
 	"io/ioutil"
 )
 

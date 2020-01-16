@@ -6,11 +6,10 @@ import (
 	"github.com/ProtocolONE/go-core/v2/pkg/invoker"
 	"github.com/ProtocolONE/go-core/v2/pkg/provider"
 	"github.com/google/wire"
-	"github.com/paysuper/paysuper-billing-server/pkg"
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/grpc"
 	"github.com/paysuper/paysuper-checkout/internal/dispatcher/common"
 	"github.com/paysuper/paysuper-checkout/internal/validators"
 	"github.com/paysuper/paysuper-checkout/pkg/micro"
+	billing "github.com/paysuper/paysuper-proto/go/billingpb"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -34,7 +33,7 @@ func ProviderGlobalCfg(cfg config.Configurator) (*common.Config, func(), error) 
 // ProviderServices
 func ProviderServices(srv *micro.Micro) common.Services {
 	return common.Services{
-		Billing: grpc.NewBillingService(pkg.ServiceName, srv.Client()),
+		Billing: billing.NewBillingService(billing.ServiceName, srv.Client()),
 	}
 }
 

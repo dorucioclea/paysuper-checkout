@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"github.com/ProtocolONE/go-core/v2/pkg/logger"
 	"github.com/labstack/echo/v4"
-	"github.com/paysuper/paysuper-billing-server/pkg"
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/grpc"
+	billing "github.com/paysuper/paysuper-proto/go/billingpb"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 )
@@ -18,7 +17,7 @@ func CheckProjectAuthRequestSignature(dispatch HandlerSet, ctx echo.Context, pro
 		return echo.NewHTTPError(http.StatusBadRequest, ErrorMessageSignatureHeaderIsEmpty)
 	}
 
-	req := &grpc.CheckProjectRequestSignatureRequest{
+	req := &billing.CheckProjectRequestSignatureRequest{
 		Body:      string(ExtractRawBodyContext(ctx)),
 		ProjectId: projectId,
 		Signature: signature,
@@ -30,7 +29,7 @@ func CheckProjectAuthRequestSignature(dispatch HandlerSet, ctx echo.Context, pro
 		return echo.NewHTTPError(http.StatusInternalServerError, ErrorUnknown)
 	}
 
-	if rsp.Status != pkg.ResponseStatusOk {
+	if rsp.Status != billing.ResponseStatusOk {
 		return echo.NewHTTPError(int(rsp.Status), rsp.Message)
 	}
 
@@ -38,7 +37,7 @@ func CheckProjectAuthRequestSignature(dispatch HandlerSet, ctx echo.Context, pro
 }
 
 // GetValidationError
-func GetValidationError(err error) (rspErr grpc.ResponseErrorMessage) {
+func GetValidationError(err error) (rspErr billing.ResponseErrorMessage) {
 	vErr := err.(validator.ValidationErrors)[0] // TODO: possible out of range
 	val, ok := ValidationErrors[vErr.Field()]
 

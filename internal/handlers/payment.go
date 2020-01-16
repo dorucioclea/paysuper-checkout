@@ -4,9 +4,8 @@ import (
 	"github.com/ProtocolONE/go-core/v2/pkg/logger"
 	"github.com/ProtocolONE/go-core/v2/pkg/provider"
 	"github.com/labstack/echo/v4"
-	"github.com/paysuper/paysuper-billing-server/pkg"
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/grpc"
 	"github.com/paysuper/paysuper-checkout/internal/dispatcher/common"
+	billing "github.com/paysuper/paysuper-proto/go/billingpb"
 	"net/http"
 )
 
@@ -59,7 +58,7 @@ func (h *PaymentRoute) processCreatePayment(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, common.ErrorRequestDataInvalid)
 	}
 
-	req := &grpc.PaymentCreateRequest{
+	req := &billing.PaymentCreateRequest{
 		Data:           data,
 		AcceptLanguage: ctx.Request().Header.Get(common.HeaderAcceptLanguage),
 		UserAgent:      ctx.Request().Header.Get(common.HeaderUserAgent),
@@ -68,10 +67,10 @@ func (h *PaymentRoute) processCreatePayment(ctx echo.Context) error {
 	res, err := h.dispatch.Services.Billing.PaymentCreateProcess(ctx.Request().Context(), req)
 
 	if err != nil {
-		return h.dispatch.SrvCallHandler(req, err, pkg.ServiceName, "PaymentCreateProcess")
+		return h.dispatch.SrvCallHandler(req, err, billing.ServiceName, "PaymentCreateProcess")
 	}
 
-	if res.Status != pkg.ResponseStatusOk {
+	if res.Status != billing.ResponseStatusOk {
 		return echo.NewHTTPError(int(res.Status), res.Message)
 	}
 

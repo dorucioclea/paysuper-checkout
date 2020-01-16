@@ -2,7 +2,7 @@ package common
 
 import (
 	"github.com/ProtocolONE/go-core/v2/pkg/logger"
-	"github.com/paysuper/paysuper-billing-server/pkg"
+	billing "github.com/paysuper/paysuper-proto/go/billingpb"
 )
 
 type Dictionary struct {
@@ -40,7 +40,7 @@ const (
 )
 
 func LogSrvCallFailedGRPC(log logger.Logger, err error, name, method string, req interface{}) {
-	log.Error(pkg.ErrorGrpcServiceCallFailed,
+	log.Error(billing.ErrorGrpcServiceCallFailed,
 		logger.PairArgs(
 			ErrorFieldService, name,
 			ErrorFieldMethod, method,
