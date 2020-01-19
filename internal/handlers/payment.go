@@ -47,7 +47,7 @@ func (h *PaymentRoute) Route(groups *common.Groups) {
 // @accept application/json
 // @produce application/json
 // @body grpc.PaymentCreateRequest
-// @success 200 {object} RedirectResponse OK
+// @success 200 {object} RedirectResponse Returns a redirect URL and a boolean value whether a redirect needs
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
 // @router /api/v1/payment [post]

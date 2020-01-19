@@ -7,152 +7,43 @@ servers:
     description: Production API
 components:
   schemas:
-    DeleteSavedCardRequest:
-      type: object
-      required:
-      - id
-      properties:
-        id:
-          description: "The unique identifier for the saved card."
-          type: string
-    CreateOrderJsonProjectResponse:
+    ResponseErrorMessage:
       type: object
       properties:
-        id:
-          description: "The unique identifier for the order."
+        code:
+          description: "The error code."
           type: string
-        payment_form_url:
-          description: "The URL of the PaySuper-hosted payment form."
+        message:
+          description: "The error short description."
           type: string
-    ReCreateOrderRequest:
-      type: object
-      properties:
-        order_id:
-          description: "The unique identifier for the order."
-          type: string
-    OrderCreateRequest:
-      type: object
-      required:
-      - project
-      - type
-      properties:
-        project:
-          description: "The ID of the Project found in your merchant account in the PaySuper Dashboard."
-          type: string
-        amount:
-          description: "The order amount as a positive number. It is required for a simple checkout payment."
-          type: number
-        currency:
-          description: "The currency of the order. Three-letter Currency Code ISO 4217, in uppercase. If provided, the amount will be processed in this currency. It is required for a payment when the type equals to simple."
-          type: string
-        account:
-          description: "The user's unique account in the merchant project."
-          type: string
-        order_id:
-          description: "The unique order identifier in the merchant project. This field is not required, but we recommend always sending this field."
-          type: string
-        description:
-          description: "The arbitrary order description."
-          type: string
-        url_success:
-          description: "The redirect URL for the successful payment. You need to enable the dynamic notify URLs option in the Project Settings to use this field."
-          type: string
-        url_fail:
-          description: "The redirect URL for the failed payment. You need to enable the dynamic notify URLs option in the Project Settings to use this field."
-          type: string
-        products:
-          description: "The list of unique identifiers of Products being in the Project. It is required if a payment type is equal to product or key."
-          type: array
-          items:
-            type: string
-        token:
-          description: "An encrypted string that represents certain details of your customer (such as the user ID, email and others), a game and purchase parameters. The token overrides the corresponding parameters in an order object even the required parameters."
-          type: string
-        user:
-          type: object
-          properties:
-            external_id:
-              description: "The user unique identifier in the merchant project."
-              type: string
-            name:
-              description: "The user's name."
-              type: string
-            email:
-              description: "The user's email address."
-              type: string
-            email_verified:
-              description: "Whether the user's email address has been verified on the merchant side."
-              type: boolean
-            phone:
-              description: "The user's phone number."
-              type: string
-            phone_verified:
-              description: "Whether the user's phone number has been verified on the merchant side."
-              type: boolean
-            ip:
-              description: "The user's IP address."
-              type: string
-            locale:
-              description: "The user's locale name. The language code by ISO 639-1 (for instance\" en-U\")."
-              type: string
-            address:
-              type: object
-              properties:
-                country:
-                  description: "The user's country. Two-letter country code by ISO 3166-1, in uppercase (for instance\" U\")."
-                  type: string
-                city:
-                  description: "The user’s city."
-                  type: string
-                postal_code:
-                  description: "The user's postal code."
-                  type: string
-                state:
-                  description: "The user's state code by ISO 3166-2."
-                  type: string
-        type:
-          description: "The order type. It depends on your sales option (Game Keys, Virtual Items, the simple checkout). For products created as Game Keys use the key type, as Virtual Items - the product type, for a simple checkout - the simple type. Enum values: key, product, simple."
-          type: string
-        platform_id:
-          description: "The default platform's name for which a customer buys a key. This field is used only for the key type. Enum values: steam, gog, uplay, origin, psn, xbox, nintendo, itch, egs."
-          type: string
-    PaymentFormUserChangeLangRequest:
-      type: object
-      required:
-      - order_id
-      - lang
-      properties:
-        order_id:
-          description: "The unique identifier for the order."
-          type: string
-        lang:
-          description: "The language code."
+        details:
+          description: "The error details."
           type: string
     PaymentFormDataChangeResponseItem:
       type: object
       properties:
         user_address_data_required:
-          description: "Has a true value if it's required to get a real user's geo-position information."
+          description: "Has a true value if it's required to get a real customer's geo-position information."
           type: boolean
         user_ip_data:
           type: object
           properties:
             country:
-              description: "The user's country. Two-letter country code by ISO 3166-1, in uppercase (for instance\" U\")."
+              description: "The customer's country. Two-letter country code by ISO 3166-1, in uppercase (for instance\" U\")."
               type: string
             city:
-              description: "The user's city."
+              description: "The customer's city."
               type: string
             zip:
-              description: "The user's postal code."
+              description: "The customer's postal code."
               type: string
         brand:
           type: string
         country_payments_allowed:
-          description: "Has a true value if the payments are allowed from this user's country."
+          description: "Has a true value if the payments are allowed from this customer's country."
           type: boolean
         country_change_allowed:
-          description: "Has a true value if a user can select another country in case of the payments are disallowed for his country."
+          description: "Has a true value if a customer can select another country in case of the payments are disallowed for his country."
           type: boolean
         has_vat:
           description: "Has a true value in case of displaying VAT commission in a payment form."
@@ -235,17 +126,33 @@ components:
                 description: "The game code."
                 type: string
         charge_currency:
-          description: "A currency of the order charge. It can differ from the order currency because it also depends on a user's card currency."
+          description: "A currency of the order charge. It can differ from the order currency because it also depends on a customer's card currency."
           type: string
         charge_amount:
           description: "A total amount of the order charge."
           type: number
         vat_in_charge_currency:
-          description: "VAT currency of the order charge. It can differ from the order currency because it also depends on a user's card currency."
+          description: "VAT currency of the order charge. It can differ from the order currency because it also depends on a customer's card currency."
           type: number
         vat_rate:
           description: "VAT rate."
           type: number
+    PaymentFormUserChangePaymentAccountRequest:
+      type: object
+      required:
+      - order_id
+      - method_id
+      - account
+      properties:
+        order_id:
+          description: "The unique identifier for the order."
+          type: string
+        method_id:
+          description: "The unique identifier for a payment method."
+          type: string
+        account:
+          description: "The customer's unique account in the merchant project."
+          type: string
     SetUserNotifyRequest:
       type: object
       required:
@@ -255,81 +162,23 @@ components:
           description: "The order UUID."
           type: string
         enable_notification:
-          description: "Has a true value if a user confirmed to receive notifications."
+          description: "Has a true value if a customer has confirmed to receive notifications."
           type: boolean
         email:
           description: "The customer's email for notifications."
           type: string
-    OrderReceipt:
+    PaymentFormUserChangePlatformRequest:
       type: object
+      required:
+      - order_id
+      - platform
       properties:
-        total_price:
-          description: "The total order price not including VAT formatted with a sign of the order currency."
+        order_id:
+          description: "The unique identifier for the order."
           type: string
-        transaction_id:
-          description: "The unique identifier for the transaction."
+        platform:
+          description: "The platform's name. Available values: steam, gog, uplay, origin, psn, xbox, nintendo, itch, egs."
           type: string
-        transaction_date:
-          description: "A transaction date."
-          type: string
-        project_name:
-          description: "The project's name."
-          type: string
-        merchant_name:
-          description: "The merchant's name."
-          type: string
-        items:
-          type: array
-          items:
-            properties:
-              name:
-                description: "The receipt's item name."
-                type: string
-              price:
-                description: "The receipt's item price."
-                type: string
-        order_type:
-          description: "The type of the order."
-          type: string
-        platform_name:
-          description: "The platform's name (if any)."
-          type: string
-        payment_partner:
-          description: "The payment partner's name."
-          type: string
-        vat_payer:
-          description: "Responsible for VAT. Available values: buyer (VAT is added to the order charge), seller (VAT is included in the order charge), nobody (VAT exempt)."
-          type: string
-        vat_in_order_currency:
-          description: "VAT amount formatted with a sign of the order currency."
-          type: string
-        vat_in_charge_currency:
-          description: "VAT amount formatted with an order charge currency sign."
-          type: string
-        total_amount:
-          description: "The order total amount including VAT formatted with a sign of the order currency."
-          type: string
-        total_charge:
-          description: "The order total amount including VAT formatted with a sign of the order charge currency."
-          type: string
-        receipt_id:
-          description: "The unique identifier for the order receipt."
-          type: string
-        url:
-          description: "The order receipt URL."
-          type: string
-        vat_rate:
-          description: "The order VAT rate formatted with a percent sign."
-          type: string
-    RedirectResponse:
-      type: object
-      properties:
-        redirect_url:
-          description: "The redirection URL."
-          type: string
-        need_redirect:
-          description: "Has a true value if it's need to perform redirection by link."
-          type: boolean
     CountriesList:
       type: object
       properties:
@@ -350,7 +199,7 @@ components:
                 description: "Has a true value if a payment is allowed from this country."
                 type: boolean
               change_allowed:
-                description: "Has a true value if a user can select another country in case of the payments are disallowed for this country."
+                description: "Has a true value if a customer can select another country in case of the payments are disallowed for this country."
                 type: boolean
               vat_enabled:
                 description: "Has a true value if VAT is calculated and paid for this country."
@@ -392,32 +241,8 @@ components:
                 description: "Has a true value if payments from this country is allowed. Has a false value for a high-risk merchant."
                 type: boolean
               high_risk_change_allowed:
-                description: "Has a true value if a user can select another country in case of the payments are disallowed for a country determined by a customer's IP address."
+                description: "Has a true value if a customer can select another country in case of the payments are disallowed for a country determined by a customer's IP address."
                 type: boolean
-    ResponseErrorMessage:
-      type: object
-      properties:
-        code:
-          description: "The error code."
-          type: string
-        message:
-          description: "The error short description."
-          type: string
-        details:
-          description: "The error details."
-          type: string
-    PaymentFormUserChangePlatformRequest:
-      type: object
-      required:
-      - order_id
-      - platform
-      properties:
-        order_id:
-          description: "The unique identifier for the order."
-          type: string
-        platform:
-          description: "The platform's name. Available values: steam, gog, uplay, origin, psn, xbox, nintendo, itch, egs."
-          type: string
     PaymentFormJsonData:
       type: object
       properties:
@@ -425,7 +250,7 @@ components:
           description: "The unique identifier for an order."
           type: string
         account:
-          description: "The user's unique account in the merchant project. The value can be null."
+          description: "The customer's unique account in the merchant project. Can be null."
           type: string
         has_vat:
           description: "Has a true value in case of displaying VAT commission in a payment form."
@@ -505,19 +330,19 @@ components:
           description: "An access token to subscribe a WebSocket private channel."
           type: string
         user_address_data_required:
-          description: "Has a true value if it's required to get a real user's geo-position information."
+          description: "Has a true value if it's required to get a real customer's geo-position information."
           type: boolean
         user_ip_data:
           type: object
           properties:
             country:
-              description: "The user's country. Two-letter country code by ISO 3166-1, in uppercase (for instance\" U\")."
+              description: "The customer's country. Two-letter country code by ISO 3166-1, in uppercase (for instance\" U\")."
               type: string
             city:
-              description: "The user's city."
+              description: "The customer's city."
               type: string
             zip:
-              description: "The user's postal code."
+              description: "The customer's postal code."
               type: string
         items:
           type: array
@@ -585,16 +410,16 @@ components:
                 description: "The game code."
                 type: string
         email:
-          description: "A user's email."
+          description: "A customer's email."
           type: string
         description:
           description: "An order description."
           type: string
         country_payments_allowed:
-          description: "Has a true value if the payments are allowed from this user's country."
+          description: "Has a true value if the payments are allowed from this customer's country."
           type: boolean
         country_change_allowed:
-          description: "Has a true value if a user can select another country in case of the payments are disallowed for his country."
+          description: "Has a true value if a customer can select another country in case of the payments are disallowed for his country."
           type: boolean
         platforms:
           type: array
@@ -621,13 +446,13 @@ components:
           description: "The order type. It depends on your sales option (Game Keys, Virtual Items, the simple checkout). Available values: key, product, simple."
           type: string
         charge_currency:
-          description: "A currency of the order charge. It can differ from the order currency because it also depends on a user's card currency."
+          description: "A currency of the order charge. It can differ from the order currency because it also depends on a customer's card currency."
           type: string
         charge_amount:
           description: "A total amount of the order charge."
           type: number
         vat_in_charge_currency:
-          description: "VAT currency of the order charge. It can differ from the order currency because it also depends on a user's card currency."
+          description: "VAT currency of the order charge. It can differ from the order currency because it also depends on a customer's card currency."
           type: number
         vat_rate:
           description: "VAT rate."
@@ -638,36 +463,23 @@ components:
         is_production:
           description: "Has a true value for a production payment and false for a test payment that goes through a test sandbox."
           type: boolean
-    ProcessBillingAddressRequest:
+    ReCreateOrderRequest:
       type: object
-      required:
-      - order_id
-      - country
       properties:
         order_id:
           description: "The unique identifier for the order."
           type: string
-        country:
-          description: "The user's country. Two-letter country code by ISO 3166-1, in uppercase (for instance\" U\")."
-          type: string
-        zip:
-          description: "The user's ZIP code."
-          type: string
-    PaymentFormUserChangePaymentAccountRequest:
+    PaymentFormUserChangeLangRequest:
       type: object
       required:
       - order_id
-      - method_id
-      - account
+      - lang
       properties:
         order_id:
           description: "The unique identifier for the order."
           type: string
-        method_id:
-          description: "The unique identifier for a payment method."
-          type: string
-        account:
-          description: "The user's unique account in the merchant project."
+        lang:
+          description: "The language code."
           type: string
     ProcessBillingAddressResponseItem:
       type: object
@@ -753,20 +565,208 @@ components:
                 description: "The game code."
                 type: string
         charge_currency:
-          description: "A currency of the order charge. It can differ from the order currency because it also depends on a user's card currency."
+          description: "A currency of the order charge. It can differ from the order currency because it also depends on a customer's card currency."
           type: string
         charge_amount:
           description: "A total amount of the order charge."
           type: number
         vat_in_charge_currency:
-          description: "VAT currency of the order charge. It can differ from the order currency because it also depends on a user's card currency."
+          description: "VAT currency of the order charge. It can differ from the order currency because it also depends on a customer's card currency."
           type: number
         country_change_allowed:
-          description: "Has a true value if a user can select another country in case of the payments are disallowed for his country."
+          description: "Has a true value if a customer can select another country in case of the payments are disallowed for his country."
           type: boolean
         vat_rate:
           description: "VAT rate."
           type: number
+    RedirectResponse:
+      type: object
+      properties:
+        redirect_url:
+          description: "The redirection URL."
+          type: string
+        need_redirect:
+          description: "Has a true value if it's need to perform redirection by link."
+          type: boolean
+    OrderCreateRequest:
+      type: object
+      required:
+      - project
+      - type
+      properties:
+        project:
+          description: "The ID of the Project found in your merchant account in the PaySuper Dashboard."
+          type: string
+        amount:
+          description: "The order amount as a positive number. It is required for a simple checkout payment."
+          type: number
+        currency:
+          description: "The currency of the order. Three-letter Currency Code ISO 4217, in uppercase. If provided, the amount will be processed in this currency. It is required for a payment when the type equals to simple."
+          type: string
+        account:
+          description: "The customer's unique account in the merchant project."
+          type: string
+        order_id:
+          description: "The unique order identifier in the merchant project. This field is not required, but we recommend always sending this field."
+          type: string
+        description:
+          description: "The arbitrary order description."
+          type: string
+        url_success:
+          description: "The redirect URL for the successful payment. You need to enable the dynamic notify URLs option in the Project Settings to use this field."
+          type: string
+        url_fail:
+          description: "The redirect URL for the failed payment. You need to enable the dynamic notify URLs option in the Project Settings to use this field."
+          type: string
+        products:
+          description: "The list of unique identifiers of Products being in the Project. It is required if a payment type is equal to product or key."
+          type: array
+          items:
+            type: string
+        token:
+          description: "An encrypted string that represents certain details of your customer (such as the customer ID, email and others), a game and purchase parameters. The token overrides the corresponding parameters in an order object even the required parameters."
+          type: string
+        user:
+          type: object
+          properties:
+            external_id:
+              description: "The unique identifier for the customer in the merchant project."
+              type: string
+            name:
+              description: "The customer's name."
+              type: string
+            email:
+              description: "The customer's email address."
+              type: string
+            email_verified:
+              description: "Whether the customer's email address has been verified on the merchant side."
+              type: boolean
+            phone:
+              description: "The customer's phone number."
+              type: string
+            phone_verified:
+              description: "Whether the customer's phone number has been verified on the merchant side."
+              type: boolean
+            ip:
+              description: "The customer's IP address."
+              type: string
+            locale:
+              description: "The customer's locale name. The language code by ISO 639-1 (for instance\" en-U\")."
+              type: string
+            address:
+              type: object
+              properties:
+                country:
+                  description: "The customer's country. Two-letter country code by ISO 3166-1, in uppercase (for instance\" U\")."
+                  type: string
+                city:
+                  description: "The customer’s city."
+                  type: string
+                postal_code:
+                  description: "The customer's postal code."
+                  type: string
+                state:
+                  description: "The customer's state code by ISO 3166-2."
+                  type: string
+        type:
+          description: "The order type. It depends on your sales option (Game Keys, Virtual Items, the simple checkout). For products created as Game Keys use the key type, as Virtual Items - the product type, for a simple checkout - the simple type. Enum values: key, product, simple."
+          type: string
+        platform_id:
+          description: "The default platform's name for which a customer buys a key. This field is used only for the key type. Enum values: steam, gog, uplay, origin, psn, xbox, nintendo, itch, egs."
+          type: string
+    OrderReceipt:
+      type: object
+      properties:
+        total_price:
+          description: "The total order price not including VAT formatted with a sign of the order currency."
+          type: string
+        transaction_id:
+          description: "The unique identifier for the transaction."
+          type: string
+        transaction_date:
+          description: "A transaction date."
+          type: string
+        project_name:
+          description: "The project's name."
+          type: string
+        merchant_name:
+          description: "The merchant's name."
+          type: string
+        items:
+          type: array
+          items:
+            properties:
+              name:
+                description: "The receipt's item name."
+                type: string
+              price:
+                description: "The receipt's item price."
+                type: string
+        order_type:
+          description: "The type of the order."
+          type: string
+        platform_name:
+          description: "The platform's name (if any)."
+          type: string
+        payment_partner:
+          description: "The payment partner's name."
+          type: string
+        vat_payer:
+          description: "Responsible for VAT. Available values: buyer (VAT is added to the order charge), seller (VAT is included in the order charge), nobody (VAT exempt)."
+          type: string
+        vat_in_order_currency:
+          description: "VAT amount formatted with a sign of the order currency."
+          type: string
+        vat_in_charge_currency:
+          description: "VAT amount formatted with an order charge currency sign."
+          type: string
+        total_amount:
+          description: "The order total amount including VAT formatted with a sign of the order currency."
+          type: string
+        total_charge:
+          description: "The order total amount including VAT formatted with a sign of the order charge currency."
+          type: string
+        receipt_id:
+          description: "The unique identifier for the order receipt."
+          type: string
+        url:
+          description: "The order receipt URL."
+          type: string
+        vat_rate:
+          description: "The order VAT rate formatted with a percent sign."
+          type: string
+    CreateOrderJsonProjectResponse:
+      type: object
+      properties:
+        id:
+          description: "The unique identifier for the order."
+          type: string
+        payment_form_url:
+          description: "The URL of the PaySuper-hosted payment form."
+          type: string
+    ProcessBillingAddressRequest:
+      type: object
+      required:
+      - order_id
+      - country
+      properties:
+        order_id:
+          description: "The unique identifier for the order."
+          type: string
+        country:
+          description: "The customer's country. Two-letter country code by ISO 3166-1, in uppercase (for instance\" U\")."
+          type: string
+        zip:
+          description: "The customer's ZIP code."
+          type: string
+    DeleteSavedCardRequest:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          description: "The unique identifier for the saved card."
+          type: string
 paths:
   /api/v1/payment_countries/{order_id}:
     get:
@@ -784,7 +784,7 @@ paths:
           type: string
       responses:
         "200":
-          description: OK
+          description: Returns a list of available countries and their data including tax rates
           content:
             application/json:
               schema:
@@ -811,7 +811,7 @@ paths:
     post:
       summary: Create a payment order
       operationId: orderPathСreateJson
-      description: Create a payment order with a user and order data
+      description: Create a payment order with a customer and order data
       tags:
       - Payment Order
       requestBody:
@@ -821,7 +821,7 @@ paths:
               $ref: "#/components/schemas/OrderCreateRequest"
       responses:
         "200":
-          description: OK
+          description: Returns the order ID and payment form URL
           content:
             application/json:
               schema:
@@ -854,7 +854,7 @@ paths:
           type: string
       responses:
         "200":
-          description: OK
+          description: Returns an order data for rendering a payment form
           content:
             application/json:
               schema:
@@ -891,7 +891,7 @@ paths:
               $ref: "#/components/schemas/ReCreateOrderRequest"
       responses:
         "200":
-          description: OK
+          description: Returns the order ID and payment form URL
           content:
             application/json:
               schema:
@@ -929,7 +929,7 @@ paths:
               $ref: "#/components/schemas/PaymentFormUserChangeLangRequest"
       responses:
         "200":
-          description: OK
+          description: Returns an order data with a new language
           content:
             application/json:
               schema:
@@ -967,7 +967,7 @@ paths:
               $ref: "#/components/schemas/PaymentFormUserChangePaymentAccountRequest"
       responses:
         "200":
-          description: OK
+          description: "Returns an order data with a new customers's data"
           content:
             application/json:
               schema:
@@ -1005,7 +1005,7 @@ paths:
               $ref: "#/components/schemas/ProcessBillingAddressRequest"
       responses:
         "200":
-          description: OK
+          description: Returns an order data with a new billing address
           content:
             application/json:
               schema:
@@ -1061,7 +1061,7 @@ paths:
               $ref: "#/components/schemas/SetUserNotifyRequest"
       responses:
         "200":
-          description: OK
+          description: Returns an empty response body if the subscription request was successful
           content:
             text/plain:
               schema:
@@ -1105,7 +1105,7 @@ paths:
               $ref: "#/components/schemas/SetUserNotifyRequest"
       responses:
         "200":
-          description: OK
+          description: Returns an empty response body if the subscription request was successful
           content:
             text/plain:
               schema:
@@ -1149,7 +1149,7 @@ paths:
               $ref: "#/components/schemas/PaymentFormUserChangePlatformRequest"
       responses:
         "200":
-          description: OK
+          description: Returns an order data with a new platform name for a payment form rendering
           content:
             application/json:
               schema:
@@ -1194,7 +1194,7 @@ paths:
           type: string
       responses:
         "200":
-          description: OK
+          description: Returns a payment receipt data
           content:
             application/json:
               schema:
@@ -1233,7 +1233,7 @@ paths:
           type: string
       responses:
         "200":
-          description: OK
+          description: Returns a payment link URL
           content:
             text/plain:
               schema:
@@ -1265,7 +1265,7 @@ paths:
       - Payment
       responses:
         "200":
-          description: OK
+          description: Returns a redirect URL and a boolean value whether a redirect needs
           content:
             application/json:
               schema:
@@ -1296,7 +1296,7 @@ paths:
               $ref: "#/components/schemas/DeleteSavedCardRequest"
       responses:
         "200":
-          description: OK
+          description: Returns an empty response body if the deletion request was successful
           content:
             text/plain:
               schema:

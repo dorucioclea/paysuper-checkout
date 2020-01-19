@@ -41,7 +41,7 @@ func (h *RecurringRoute) Route(groups *common.Groups) {
 // @accept application/json
 // @produce application/json
 // @body grpc.DeleteSavedCardRequest
-// @success 200 {string} OK
+// @success 200 {string} Returns an empty response body if the deletion request was successful
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error

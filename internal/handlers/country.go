@@ -40,7 +40,7 @@ func (h *CountryRoute) Route(groups *common.Groups) {
 // @tag Country
 // @accept application/json
 // @produce application/json
-// @success 200 {object} billing.CountriesList OK
+// @success 200 {object} billing.CountriesList Returns a list of available countries and their data including tax rates
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error

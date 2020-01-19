@@ -88,13 +88,13 @@ func (h *OrderRoute) Route(groups *common.Groups) {
 }
 
 // @summary Create a payment order
-// @desc Create a payment order with a user and order data
+// @desc Create a payment order with a customer and order data
 // @id orderPathСreateJson
 // @tag Payment Order
 // @accept application/json
 // @produce application/json
 // @body billing.OrderCreateRequest
-// @success 200 {object} CreateOrderJsonProjectResponse OK
+// @success 200 {object} CreateOrderJsonProjectResponse Returns the order ID and payment form URL
 // @failure 400 {object} grpc.ResponseErrorMessage The error code and message with the error details
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
 // @router /api/v1/order [post]
@@ -172,7 +172,7 @@ func (h *OrderRoute) createJson(ctx echo.Context) error {
 // @tag Order
 // @accept application/json
 // @produce application/json
-// @success 200 {object} grpc.PaymentFormJsonData OK
+// @success 200 {object} grpc.PaymentFormJsonData Returns an order data for rendering a payment form
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
@@ -218,7 +218,7 @@ func (h *OrderRoute) getPaymentFormData(ctx echo.Context) error {
 // @accept application/json
 // @produce application/json
 // @body ReCreateOrderRequest
-// @success 200 {object} CreateOrderJsonProjectResponse OK
+// @success 200 {object} CreateOrderJsonProjectResponse Returns the order ID and payment form URL
 // @failure 400 {object} grpc.ResponseErrorMessage The error code and message with the error details
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
 // @router /api/v1/order/recreate [post]
@@ -255,7 +255,7 @@ func (h *OrderRoute) recreateOrder(ctx echo.Context) error {
 // @accept application/json
 // @produce application/json
 // @body grpc.PaymentFormUserChangeLangRequest
-// @success 200 {object} billing.PaymentFormDataChangeResponseItem OK
+// @success 200 {object} billing.PaymentFormDataChangeResponseItem Returns an order data with a new language
 // @failure 400 {object} grpc.ResponseErrorMessage The error code and message with the error details
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
 // @param order_id path {string} true The unique identifier for the order
@@ -291,7 +291,7 @@ func (h *OrderRoute) changeLanguage(ctx echo.Context) error {
 // @accept application/json
 // @produce application/json
 // @body grpc.PaymentFormUserChangePaymentAccountRequest
-// @success 200 {object} billing.PaymentFormDataChangeResponseItem OK
+// @success 200 {object} billing.PaymentFormDataChangeResponseItem Returns an order data with a new customers's data
 // @failure 400 {object} grpc.ResponseErrorMessage The error code and message with the error details
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
 // @param order_id path {string} true The unique identifier for the order
@@ -327,7 +327,7 @@ func (h *OrderRoute) changeCustomer(ctx echo.Context) error {
 // @accept application/json
 // @produce application/json
 // @body grpc.ProcessBillingAddressRequest
-// @success 200 {object} grpc.ProcessBillingAddressResponseItem OK
+// @success 200 {object} grpc.ProcessBillingAddressResponseItem Returns an order data with a new billing address
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 401 {object} grpc.ResponseErrorMessage Unauthorized
 // @failure 403 {object} grpc.ResponseErrorMessage Access denied
@@ -368,7 +368,7 @@ func (h *OrderRoute) processBillingAddress(ctx echo.Context) error {
 // @accept application/json
 // @produce application/json
 // @body grpc.SetUserNotifyRequest
-// @success 200 {string} OK
+// @success 200 {string} Returns an empty response body if the subscription request was successful
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
@@ -397,7 +397,7 @@ func (h *OrderRoute) notifySale(ctx echo.Context) error {
 // @accept application/json
 // @produce application/json
 // @body grpc.SetUserNotifyRequest
-// @success 200 {string} OK
+// @success 200 {string} Returns an empty response body if the subscription request was successful
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
@@ -426,7 +426,7 @@ func (h *OrderRoute) notifyNewRegion(ctx echo.Context) error {
 // @accept application/json
 // @produce application/json
 // @body grpc.PaymentFormUserChangePlatformRequest
-// @success 200 {object} billing.PaymentFormDataChangeResponseItem OK
+// @success 200 {object} billing.PaymentFormDataChangeResponseItem Returns an order data with a new platform name for a payment form rendering
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
@@ -458,7 +458,7 @@ func (h *OrderRoute) changePlatform(ctx echo.Context) error {
 // @tag Order
 // @accept application/json
 // @produce application/json
-// @success 200 {object} billing.OrderReceipt OK
+// @success 200 {object} billing.OrderReceipt Returns a payment receipt data
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
@@ -491,7 +491,7 @@ func (h *OrderRoute) getReceipt(ctx echo.Context) error {
 // @tag Order
 // @accept application/json
 // @produce application/json
-// @success 200 {string} OK
+// @success 200 {string} Returns a payment link URL
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
