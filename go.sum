@@ -764,6 +764,8 @@ github.com/paysuper/paysuper-billing-server v1.1.1-0.20200119092104-0e5406e6cd13
 github.com/paysuper/paysuper-billing-server v1.1.1-0.20200119092104-0e5406e6cd13/go.mod h1:wacXBTTQCxsH+O6MzUsgGMkixlpl7gUCIrtq35bm5sg=
 github.com/paysuper/paysuper-billing-server v1.1.1-0.20200120123647-7fe889b7acd0 h1:bjAho9YtFZJQeYPOYfK78PUg29TN0Fy5jmqYHlNToko=
 github.com/paysuper/paysuper-billing-server v1.1.1-0.20200120123647-7fe889b7acd0/go.mod h1:wacXBTTQCxsH+O6MzUsgGMkixlpl7gUCIrtq35bm5sg=
+github.com/paysuper/paysuper-billing-server v1.1.1-0.20200120132403-3694b9bb1e10 h1:xkrnhlFcQbrCOX1fNPCbMGotJ0iJhkI6u0k1WvqtpYs=
+github.com/paysuper/paysuper-billing-server v1.1.1-0.20200120132403-3694b9bb1e10/go.mod h1:WZ/0IMzMzcM53ZYsOjzomWBIPRwiB18mS/gJLspPcR4=
 github.com/paysuper/paysuper-currencies v0.0.0-20190903083641-668b8b2b997d/go.mod h1:C+QHdgbjIlAPxHD93/08yi+xWfUgk8maLY8FKFqNzMQ=
 github.com/paysuper/paysuper-currencies v0.0.0-20191209131235-52121b09aab0 h1:7DrckuM24ql1WUdKk6Cmt/YES8BJ5nq7JvptcKShPsg=
 github.com/paysuper/paysuper-currencies v0.0.0-20191209131235-52121b09aab0/go.mod h1:E4w9GTFf1OFe2tCPxIUJR3EW3M8UqwxpRzxMS5aymc4=
@@ -903,6 +905,7 @@ github.com/spf13/viper v1.4.0 h1:yXHLWeravcrgGyFSyCgdYpXQ9dR9c/WED3pg1RhxqEU=
 github.com/spf13/viper v1.4.0/go.mod h1:PTJ7Z/lr49W6bUbkmS1V3by4uWynFiR9p7+dSq/yZzE=
 github.com/src-d/gcfg v1.4.0/go.mod h1:p/UMsR43ujA89BJY9duynAwIpvqEujIH/jFlfL7jWoI=
 github.com/stoewer/go-strcase v1.0.2/go.mod h1:eLfe5bL3qbL7ep/KafHzthxejrOF5J3xmt03uL5tzek=
+github.com/stoewer/go-strcase v1.1.0/go.mod h1:G7YglbHPK5jX3JcWljxVXRXPh90/dtxfy6xWqxu5b90=
 github.com/streadway/amqp v0.0.0-20181205114330-a314942b2fd9/go.mod h1:1WNBiOZtZQLpVAyu0iTduoJL9hEsMloAK5XWrtW0xdY=
 github.com/streadway/amqp v0.0.0-20190404075320-75d898a42a94/go.mod h1:AZpEONHx3DKn8O/DFsRAY58/XVQiIPMTMB1SddzLXVw=
 github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 h1:WhxRHzgeVGETMlmVfqhRn8RIeeNoPr2Czh33I4Zdccw=
@@ -1246,6 +1249,8 @@ gopkg.in/paysuper/paysuper-database-mongo.v1 v1.0.0-20191120092306-dc35c6f924f1 
 gopkg.in/paysuper/paysuper-database-mongo.v1 v1.0.0-20191120092306-dc35c6f924f1/go.mod h1:WFbzWkt8QIIRcF20tcFCzV/5H9nJrIM1uUp90AMT6eM=
 gopkg.in/paysuper/paysuper-database-mongo.v2 v2.0.0-20191225152512-d3a7cace0401 h1:mFOIFlfP3E45um60sZ2KyPQnU9W1gH0yAAlpR5jZWoM=
 gopkg.in/paysuper/paysuper-database-mongo.v2 v2.0.0-20191225152512-d3a7cace0401/go.mod h1:UI620jLphsePlvorsfeRd4+bVHpblyBD+3AS8MR65dI=
+gopkg.in/paysuper/paysuper-database-mongo.v2 v2.0.0-20200116095540-a477bfd0ce4c h1:zHQD/9leijXhuM+FyeNVA42Iie3n+0bQCWvAU8gxqYU=
+gopkg.in/paysuper/paysuper-database-mongo.v2 v2.0.0-20200116095540-a477bfd0ce4c/go.mod h1:Ta2VotFehEPc9yzL6JC2l6wibY1/pj+Ksc9Q6mg4tNc=
 gopkg.in/redis.v3 v3.6.4/go.mod h1:6XeGv/CrsUFDU9aVbUdNykN7k1zVmoeg83KC9RbQfiU=
 gopkg.in/resty.v1 v1.12.0/go.mod h1:mDo4pnntr5jdWRML875a/NmxYqAlA73dVijT2AXvQQo=
 gopkg.in/square/go-jose.v2 v2.3.1/go.mod h1:M9dMgbHiYLoDGQrXy7OpJDJWiKiU//h+vD76mk0e1AI=
