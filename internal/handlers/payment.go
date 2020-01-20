@@ -23,7 +23,7 @@ type PaymentRoute struct {
 type RedirectResponse struct {
 	// The redirection URL.
 	RedirectUrl string `json:"redirect_url"`
-	// Has a true value if it's need to perform redirection by link.
+	// Has a true value if it needs to redirect by a link.
 	NeedRedirect bool `json:"need_redirect"`
 }
 
@@ -41,7 +41,7 @@ func (h *PaymentRoute) Route(groups *common.Groups) {
 }
 
 // @summary Get a redirect URL
-// @desc Get a redirect URL after a processed payment
+// @desc Get a redirect URL after the processed payment
 // @id paymentPathProcessCreatePayment
 // @tag Payment
 // @accept application/json

@@ -166,13 +166,13 @@ func (h *OrderRoute) createJson(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
-// @summary Get an order data
-// @desc Get an order data for rendering a payment form
+// @summary Get the order data
+// @desc Get the order data to render a payment form
 // @id orderIdPathGetPaymentFormData
 // @tag Order
 // @accept application/json
 // @produce application/json
-// @success 200 {object} grpc.PaymentFormJsonData Returns an order data for rendering a payment form
+// @success 200 {object} grpc.PaymentFormJsonData Returns the order data to render a payment form
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
@@ -248,14 +248,14 @@ func (h *OrderRoute) recreateOrder(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
-// @summary Change a language
-// @desc Change a language using the order ID
+// @summary Change the language
+// @desc Change the language using the order ID
 // @id orderLanguagePathChangeLanguage
 // @tag Order
 // @accept application/json
 // @produce application/json
 // @body grpc.PaymentFormUserChangeLangRequest
-// @success 200 {object} billing.PaymentFormDataChangeResponseItem Returns an order data with a new language
+// @success 200 {object} billing.PaymentFormDataChangeResponseItem Returns the order data with a new language
 // @failure 400 {object} grpc.ResponseErrorMessage The error code and message with the error details
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
 // @param order_id path {string} true The unique identifier for the order
@@ -320,14 +320,14 @@ func (h *OrderRoute) changeCustomer(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, res.Item)
 }
 
-// @summary Change a billing address for the order
-// @desc Change a billing address for the order by the order's unique identifier
+// @summary Change the billing address for the order
+// @desc Change the billing address for the order using the order's unique identifier
 // @id orderBillingAddressPathProcessBillingAddress
 // @tag Order
 // @accept application/json
 // @produce application/json
 // @body grpc.ProcessBillingAddressRequest
-// @success 200 {object} grpc.ProcessBillingAddressResponseItem Returns an order data with a new billing address
+// @success 200 {object} grpc.ProcessBillingAddressResponseItem Returns the order data with the new billing address
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 401 {object} grpc.ResponseErrorMessage Unauthorized
 // @failure 403 {object} grpc.ResponseErrorMessage Access denied
@@ -361,8 +361,8 @@ func (h *OrderRoute) processBillingAddress(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, res.Item)
 }
 
-// @summary Subscribe on sales or discounts notifications
-// @desc Subscribe on sales or discounts notifications using the order ID
+// @summary Subscribe to sales and discounts notifications
+// @desc Subscribe to sales and discounts notifications using the order ID
 // @id orderNotifySalesPathNotifySale
 // @tag Order
 // @accept application/json
@@ -390,8 +390,8 @@ func (h *OrderRoute) notifySale(ctx echo.Context) error {
 	return ctx.NoContent(http.StatusNoContent)
 }
 
-// @summary Subscribe on notifications about new regions
-// @desc Subscribe on PaySuper newsletters about an initiation of a payment receiving from new regions
+// @summary Subscribe to notifications about new regions
+// @desc Subscribe to get an email notification when a new region becomes available at PaySuper to receive payments
 // @id orderNotifyNewRegionPathNotifyNewRegion
 // @tag Order
 // @accept application/json
