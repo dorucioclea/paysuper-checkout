@@ -40,8 +40,8 @@ func (h *PaymentRoute) Route(groups *common.Groups) {
 	groups.Common.POST(paymentPath, h.processCreatePayment)
 }
 
-// @summary Get a redirect URL
-// @desc Get a redirect URL after the processed payment
+// @summary Create a payment and return a redirect URL
+// @desc Create a payment using the order data and return the redirect URL to the payment authorisation
 // @id paymentPathProcessCreatePayment
 // @tag Payment
 // @accept application/json

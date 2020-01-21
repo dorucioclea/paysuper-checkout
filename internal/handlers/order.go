@@ -329,8 +329,7 @@ func (h *OrderRoute) changeCustomer(ctx echo.Context) error {
 // @body grpc.ProcessBillingAddressRequest
 // @success 200 {object} grpc.ProcessBillingAddressResponseItem Returns the order data with the new billing address
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
-// @failure 401 {object} grpc.ResponseErrorMessage Unauthorized
-// @failure 403 {object} grpc.ResponseErrorMessage Access denied
+// @failure 403 {object} grpc.ResponseErrorMessage Payments are disallowed for this country
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
 // @param order_id path {string} true The unique identifier for the order
@@ -368,7 +367,7 @@ func (h *OrderRoute) processBillingAddress(ctx echo.Context) error {
 // @accept application/json
 // @produce application/json
 // @body grpc.SetUserNotifyRequest
-// @success 200 {string} Returns an empty response body if the subscription request was successful
+// @success 200 {string} Returns an empty response body if the customer has successfully subscribed
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
@@ -397,7 +396,7 @@ func (h *OrderRoute) notifySale(ctx echo.Context) error {
 // @accept application/json
 // @produce application/json
 // @body grpc.SetUserNotifyRequest
-// @success 200 {string} Returns an empty response body if the subscription request was successful
+// @success 200 {string} Returns an empty response body if the customer has successfully subscribed
 // @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
 // @failure 404 {object} grpc.ResponseErrorMessage Not found
 // @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
