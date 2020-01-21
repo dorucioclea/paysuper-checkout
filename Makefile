@@ -240,6 +240,11 @@ docs-gen: ## generate markdown files for hugo (slate) theme
 		-u ${ROOT_DIR}/docs/api-reference/widdershins/templates/openapi3 -o ${ROOT_DIR}/docs/api-reference/content/api.md
 .PHONY: docs-gen
 
+openapi-gen: ## generate the OpenAPI 3 Specification to the openapi.yaml file
+	rm -f ${ROOT_DIR}/api/openapi.yaml ;\
+	apidoc -o api -e ${ROOT_DIR}/internal/handlers -m ${ROOT_DIR}/main.go -d ${ROOT_DIR}
+.PHONY: openapi-gen
+
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 .PHONY: help

@@ -5,6 +5,7 @@ import (
 	"github.com/ProtocolONE/go-core/v2/pkg/provider"
 	"github.com/labstack/echo/v4"
 	"github.com/paysuper/paysuper-billing-server/pkg"
+	_ "github.com/paysuper/paysuper-billing-server/pkg/proto/billing"
 	"github.com/paysuper/paysuper-billing-server/pkg/proto/grpc"
 	"github.com/paysuper/paysuper-checkout/internal/dispatcher/common"
 	"net/http"
@@ -33,6 +34,18 @@ func (h *CountryRoute) Route(groups *common.Groups) {
 	groups.Common.GET(paymentCountriesOrderIdPath, h.getPaymentCountries)
 }
 
+// @summary Get information about countries
+// @desc Get a list of available countries for this order
+// @id paymentCountriesOrderIdPathGetPaymentCountries
+// @tag Country
+// @accept application/json
+// @produce application/json
+// @success 200 {object} billing.CountriesList Returns a list of available countries and their data including tax rates
+// @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
+// @failure 404 {object} grpc.ResponseErrorMessage Not found
+// @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
+// @param order_id path {string} true The unique identifier for the order
+// @router /api/v1/payment_countries/{order_id} [get]
 func (h *CountryRoute) getPaymentCountries(ctx echo.Context) error {
 	req := &grpc.GetCountriesListForOrderRequest{}
 

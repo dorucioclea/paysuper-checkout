@@ -34,6 +34,18 @@ func (h *RecurringRoute) Route(groups *common.Groups) {
 	groups.Common.DELETE(removeSavedCardPath, h.removeSavedCard)
 }
 
+// @summary Delete a saved card
+// @desc Delete a saved card from a customer
+// @id removeSavedCardPathRemoveSavedCard
+// @tag Saved Card
+// @accept application/json
+// @produce application/json
+// @body grpc.DeleteSavedCardRequest
+// @success 200 {string} Returns an empty response body if the deletion request was successful
+// @failure 400 {object} grpc.ResponseErrorMessage Invalid request data
+// @failure 404 {object} grpc.ResponseErrorMessage Not found
+// @failure 500 {object} grpc.ResponseErrorMessage Internal Server Error
+// @router /api/v1/saved_card [delete]
 func (h *RecurringRoute) removeSavedCard(ctx echo.Context) error {
 	req := &grpc.DeleteSavedCardRequest{
 		Cookie: helpers.GetRequestCookie(ctx, common.CustomerTokenCookiesName),
