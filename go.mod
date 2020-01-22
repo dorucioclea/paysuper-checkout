@@ -15,7 +15,7 @@ require (
 	github.com/labstack/echo/v4 v4.1.11
 	github.com/micro/go-micro v1.18.0
 	github.com/micro/go-plugins v1.2.0
-	github.com/paysuper/paysuper-proto/go/billingpb v0.0.0-20200119221447-498828dffe30
+	github.com/paysuper/paysuper-proto/go/billingpb v0.0.0-20200122152034-6d6bb19abebf
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.4.0
