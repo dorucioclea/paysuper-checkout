@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/paysuper/paysuper-billing-server/pkg"
-	billMock "github.com/paysuper/paysuper-billing-server/pkg/mocks"
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/billing"
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/grpc"
 	"github.com/paysuper/paysuper-checkout/internal/dispatcher/common"
 	"github.com/paysuper/paysuper-checkout/internal/test"
+	billing "github.com/paysuper/paysuper-proto/go/billingpb"
+	billMock "github.com/paysuper/paysuper-proto/go/billingpb/mocks"
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -68,7 +66,7 @@ func (suite *OrderTestSuite) Test_CreateJson_Ok_WithPreparedOrder() {
 
 	bill := &billMock.BillingService{}
 	bill.On("IsOrderCanBePaying", mock2.Anything, mock2.Anything).
-		Return(&grpc.IsOrderCanBePayingResponse{Status: pkg.ResponseStatusOk, Item: &billing.Order{Uuid: orderId}}, nil)
+		Return(&billing.IsOrderCanBePayingResponse{Status: billing.ResponseStatusOk, Item: &billing.Order{Uuid: orderId}}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeCreateJsonTest(body, headers)
@@ -105,11 +103,11 @@ func (suite *OrderTestSuite) Test_CreateJson_WithPreparedOrder_BillingResponseSt
 	orderId := uuid.New().String()
 	body := fmt.Sprintf(`{"order": "%s"}`, orderId)
 	headers := map[string]string{}
-	msg := &grpc.ResponseErrorMessage{Message: "error", Code: "code"}
+	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 
 	bill := &billMock.BillingService{}
 	bill.On("IsOrderCanBePaying", mock2.Anything, mock2.Anything).
-		Return(&grpc.IsOrderCanBePayingResponse{Status: pkg.ResponseStatusBadData, Message: msg}, nil)
+		Return(&billing.IsOrderCanBePayingResponse{Status: billing.ResponseStatusBadData, Message: msg}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeCreateJsonTest(body, headers)
@@ -130,7 +128,7 @@ func (suite *OrderTestSuite) Test_CreateJson_Ok_WithoutPreparedOrder() {
 
 	bill := &billMock.BillingService{}
 	bill.On("OrderCreateProcess", mock2.Anything, mock2.Anything).
-		Return(&grpc.OrderCreateProcessResponse{Status: pkg.ResponseStatusOk, Item: &billing.Order{Uuid: orderId}}, nil)
+		Return(&billing.OrderCreateProcessResponse{Status: billing.ResponseStatusOk, Item: &billing.Order{Uuid: orderId}}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeCreateJsonTest(body, headers)
@@ -165,11 +163,11 @@ func (suite *OrderTestSuite) Test_CreateJson_WithoutPreparedOrder_BillingReturnE
 func (suite *OrderTestSuite) Test_CreateJson_WithoutPreparedOrder_BillingResponseStatusError() {
 	body := ""
 	headers := map[string]string{}
-	msg := &grpc.ResponseErrorMessage{Message: "error", Code: "code"}
+	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 
 	bill := &billMock.BillingService{}
 	bill.On("OrderCreateProcess", mock2.Anything, mock2.Anything).
-		Return(&grpc.OrderCreateProcessResponse{Status: pkg.ResponseStatusBadData, Message: msg}, nil)
+		Return(&billing.OrderCreateProcessResponse{Status: billing.ResponseStatusBadData, Message: msg}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeCreateJsonTest(body, headers)
@@ -254,7 +252,7 @@ func (suite *OrderTestSuite) Test_CreateJson_UserWithBadSignature_BillingReturnE
 
 	bill := &billMock.BillingService{}
 	bill.On("CheckProjectRequestSignature", mock2.Anything, mock2.Anything).
-		Return(&grpc.CheckProjectRequestSignatureResponse{Status: pkg.ResponseStatusBadData}, nil)
+		Return(&billing.CheckProjectRequestSignatureResponse{Status: billing.ResponseStatusBadData}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeCreateJsonTest(body, headers)
@@ -288,7 +286,7 @@ func (suite *OrderTestSuite) Test_GetPaymentFormData_Ok() {
 
 	bill := &billMock.BillingService{}
 	bill.On("PaymentFormJsonDataProcess", mock2.Anything, mock2.Anything).
-		Return(&grpc.PaymentFormJsonDataResponse{Status: pkg.ResponseStatusOk, Cookie: "setcookie"}, nil)
+		Return(&billing.PaymentFormJsonDataResponse{Status: billing.ResponseStatusOk, Cookie: "setcookie"}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeGetPaymentFormDataTest(orderId, cookie)
@@ -344,7 +342,7 @@ func (suite *OrderTestSuite) Test_GetPaymentFormData_BillingReturnError() {
 
 func (suite *OrderTestSuite) Test_GetPaymentFormData_BillingResponseStatusError() {
 	orderId := uuid.New().String()
-	msg := &grpc.ResponseErrorMessage{Message: "error", Code: "code"}
+	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 	cookie := new(http.Cookie)
 	cookie.Name = common.CustomerTokenCookiesName
 	cookie.Value = "ffffffffffffffffffffffff"
@@ -353,7 +351,7 @@ func (suite *OrderTestSuite) Test_GetPaymentFormData_BillingResponseStatusError(
 
 	bill := &billMock.BillingService{}
 	bill.On("PaymentFormJsonDataProcess", mock2.Anything, mock2.Anything).
-		Return(&grpc.PaymentFormJsonDataResponse{Status: pkg.ResponseStatusBadData, Message: msg}, nil)
+		Return(&billing.PaymentFormJsonDataResponse{Status: billing.ResponseStatusBadData, Message: msg}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeGetPaymentFormDataTest(orderId, cookie)
@@ -382,7 +380,7 @@ func (suite *OrderTestSuite) Test_RecreateOrder_Ok() {
 
 	bill := &billMock.BillingService{}
 	bill.On("OrderReCreateProcess", mock2.Anything, mock2.Anything).
-		Return(&grpc.OrderCreateProcessResponse{Status: pkg.ResponseStatusOk, Item: &billing.Order{Uuid: orderId}}, nil)
+		Return(&billing.OrderCreateProcessResponse{Status: billing.ResponseStatusOk, Item: &billing.Order{Uuid: orderId}}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeRecreateOrderTest(orderId)
@@ -429,11 +427,11 @@ func (suite *OrderTestSuite) Test_RecreateOrder_BillingReturnError() {
 
 func (suite *OrderTestSuite) Test_RecreateOrder_BillingResponseStatusError() {
 	orderId := uuid.New().String()
-	msg := &grpc.ResponseErrorMessage{Message: "error", Code: "code"}
+	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 
 	bill := &billMock.BillingService{}
 	bill.On("OrderReCreateProcess", mock2.Anything, mock2.Anything).
-		Return(&grpc.OrderCreateProcessResponse{Status: pkg.ResponseStatusBadData, Message: msg}, nil)
+		Return(&billing.OrderCreateProcessResponse{Status: billing.ResponseStatusBadData, Message: msg}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeRecreateOrderTest(orderId)
@@ -464,7 +462,7 @@ func (suite *OrderTestSuite) Test_ChangeLanguage_Ok() {
 
 	bill := &billMock.BillingService{}
 	bill.On("PaymentFormLanguageChanged", mock2.Anything, mock2.Anything).
-		Return(&grpc.PaymentFormDataChangeResponse{Status: pkg.ResponseStatusOk}, nil)
+		Return(&billing.PaymentFormDataChangeResponse{Status: billing.ResponseStatusOk}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeChangeLanguageTest(orderId, body)
@@ -485,7 +483,7 @@ func (suite *OrderTestSuite) Test_ChangeLanguage_OrderIdEmptyError() {
 	httpErr, ok := err.(*echo.HTTPError)
 	assert.True(suite.T(), ok)
 	assert.Equal(suite.T(), http.StatusBadRequest, httpErr.Code)
-	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(grpc.ResponseErrorMessage).Message)
+	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(billing.ResponseErrorMessage).Message)
 	assert.NotEmpty(suite.T(), res.Body.String())
 }
 
@@ -542,11 +540,11 @@ func (suite *OrderTestSuite) Test_ChangeLanguage_BillingReturnError() {
 func (suite *OrderTestSuite) Test_ChangeLanguage_BillingResponseStatusError() {
 	orderId := uuid.New().String()
 	body := `{"lang": "en"}`
-	msg := &grpc.ResponseErrorMessage{Message: "error", Code: "code"}
+	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 
 	bill := &billMock.BillingService{}
 	bill.On("PaymentFormLanguageChanged", mock2.Anything, mock2.Anything).
-		Return(&grpc.PaymentFormDataChangeResponse{Status: pkg.ResponseStatusBadData, Message: msg}, nil)
+		Return(&billing.PaymentFormDataChangeResponse{Status: billing.ResponseStatusBadData, Message: msg}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeChangeLanguageTest(orderId, body)
@@ -577,7 +575,7 @@ func (suite *OrderTestSuite) Test_ChangeCustomer_Ok() {
 
 	bill := &billMock.BillingService{}
 	bill.On("PaymentFormPaymentAccountChanged", mock2.Anything, mock2.Anything).
-		Return(&grpc.PaymentFormDataChangeResponse{Status: pkg.ResponseStatusOk}, nil)
+		Return(&billing.PaymentFormDataChangeResponse{Status: billing.ResponseStatusOk}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeChangeCustomerTest(orderId, body)
@@ -598,7 +596,7 @@ func (suite *OrderTestSuite) Test_ChangeCustomer_OrderIdEmptyError() {
 	httpErr, ok := err.(*echo.HTTPError)
 	assert.True(suite.T(), ok)
 	assert.Equal(suite.T(), http.StatusBadRequest, httpErr.Code)
-	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(grpc.ResponseErrorMessage).Message)
+	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(billing.ResponseErrorMessage).Message)
 	assert.NotEmpty(suite.T(), res.Body.String())
 }
 
@@ -655,11 +653,11 @@ func (suite *OrderTestSuite) Test_ChangeCustomer_BillingReturnError() {
 func (suite *OrderTestSuite) Test_ChangeCustomer_BillingResponseStatusError() {
 	orderId := uuid.New().String()
 	body := `{"method_id": "000000000000000000000000", "account": "4000000000000002"}`
-	msg := &grpc.ResponseErrorMessage{Message: "error", Code: "code"}
+	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 
 	bill := &billMock.BillingService{}
 	bill.On("PaymentFormPaymentAccountChanged", mock2.Anything, mock2.Anything).
-		Return(&grpc.PaymentFormDataChangeResponse{Status: pkg.ResponseStatusBadData, Message: msg}, nil)
+		Return(&billing.PaymentFormDataChangeResponse{Status: billing.ResponseStatusBadData, Message: msg}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeChangeCustomerTest(orderId, body)
@@ -690,7 +688,7 @@ func (suite *OrderTestSuite) Test_ProcessBillingAddress_Ok() {
 
 	bill := &billMock.BillingService{}
 	bill.On("ProcessBillingAddress", mock2.Anything, mock2.Anything).
-		Return(&grpc.ProcessBillingAddressResponse{Status: pkg.ResponseStatusOk, Cookie: "setcookie"}, nil)
+		Return(&billing.ProcessBillingAddressResponse{Status: billing.ResponseStatusOk, Cookie: "setcookie"}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeProcessBillingAddressTest(orderId, body)
@@ -712,7 +710,7 @@ func (suite *OrderTestSuite) Test_ProcessBillingAddress_OrderIdEmptyError() {
 	httpErr, ok := err.(*echo.HTTPError)
 	assert.True(suite.T(), ok)
 	assert.Equal(suite.T(), http.StatusBadRequest, httpErr.Code)
-	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(grpc.ResponseErrorMessage).Message)
+	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(billing.ResponseErrorMessage).Message)
 	assert.NotEmpty(suite.T(), res.Body.String())
 }
 
@@ -757,7 +755,7 @@ func (suite *OrderTestSuite) Test_ProcessBillingAddress_ValidationZipError() {
 	assert.True(suite.T(), ok)
 	assert.Equal(suite.T(), http.StatusBadRequest, httpErr.Code)
 
-	msg, ok := httpErr.Message.(grpc.ResponseErrorMessage)
+	msg, ok := httpErr.Message.(billing.ResponseErrorMessage)
 	assert.True(suite.T(), ok)
 	assert.Equal(suite.T(), common.ErrorMessageIncorrectZip.Message, msg.Message)
 	assert.Regexp(suite.T(), "Zip", msg.Details)
@@ -787,11 +785,11 @@ func (suite *OrderTestSuite) Test_ProcessBillingAddress_BillingReturnError() {
 func (suite *OrderTestSuite) Test_ProcessBillingAddress_BillingResponseStatusError() {
 	orderId := uuid.New().String()
 	body := `{"country": "US", "zip": "98001"}`
-	msg := &grpc.ResponseErrorMessage{Message: "error", Code: "code"}
+	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 
 	bill := &billMock.BillingService{}
 	bill.On("ProcessBillingAddress", mock2.Anything, mock2.Anything).
-		Return(&grpc.ProcessBillingAddressResponse{Status: pkg.ResponseStatusBadData, Message: msg}, nil)
+		Return(&billing.ProcessBillingAddressResponse{Status: billing.ResponseStatusBadData, Message: msg}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeProcessBillingAddressTest(orderId, body)
@@ -842,7 +840,7 @@ func (suite *OrderTestSuite) Test_NotifySale_OrderIdEmptyError() {
 	httpErr, ok := err.(*echo.HTTPError)
 	assert.True(suite.T(), ok)
 	assert.Equal(suite.T(), http.StatusBadRequest, httpErr.Code)
-	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(grpc.ResponseErrorMessage).Message)
+	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(billing.ResponseErrorMessage).Message)
 	assert.NotEmpty(suite.T(), res.Body.String())
 }
 
@@ -933,7 +931,7 @@ func (suite *OrderTestSuite) Test_NotifyNewRegion_OrderIdEmptyError() {
 	httpErr, ok := err.(*echo.HTTPError)
 	assert.True(suite.T(), ok)
 	assert.Equal(suite.T(), http.StatusBadRequest, httpErr.Code)
-	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(grpc.ResponseErrorMessage).Message)
+	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(billing.ResponseErrorMessage).Message)
 	assert.NotEmpty(suite.T(), res.Body.String())
 }
 
@@ -1004,7 +1002,7 @@ func (suite *OrderTestSuite) Test_ChangePlatformPayment_Ok() {
 
 	bill := &billMock.BillingService{}
 	bill.On("PaymentFormPlatformChanged", mock2.Anything, mock2.Anything).
-		Return(&grpc.PaymentFormDataChangeResponse{Status: pkg.ResponseStatusOk}, nil)
+		Return(&billing.PaymentFormDataChangeResponse{Status: billing.ResponseStatusOk}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeChangePlatformTest(orderId, body)
@@ -1025,7 +1023,7 @@ func (suite *OrderTestSuite) Test_ChangePlatformPayment_OrderIdEmptyError() {
 	httpErr, ok := err.(*echo.HTTPError)
 	assert.True(suite.T(), ok)
 	assert.Equal(suite.T(), http.StatusBadRequest, httpErr.Code)
-	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(grpc.ResponseErrorMessage).Message)
+	assert.Equal(suite.T(), common.ErrorIncorrectOrderId.Message, httpErr.Message.(billing.ResponseErrorMessage).Message)
 	assert.NotEmpty(suite.T(), res.Body.String())
 }
 
@@ -1082,11 +1080,11 @@ func (suite *OrderTestSuite) Test_ChangePlatformPayment_BillingReturnError() {
 func (suite *OrderTestSuite) Test_ChangePlatformPayment_BillingResponseStatusError() {
 	orderId := uuid.New().String()
 	body := `{"platform": "gog"}`
-	msg := &grpc.ResponseErrorMessage{Message: "error", Code: "code"}
+	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 
 	bill := &billMock.BillingService{}
 	bill.On("PaymentFormPlatformChanged", mock2.Anything, mock2.Anything).
-		Return(&grpc.PaymentFormDataChangeResponse{Status: pkg.ResponseStatusBadData, Message: msg}, nil)
+		Return(&billing.PaymentFormDataChangeResponse{Status: billing.ResponseStatusBadData, Message: msg}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeChangePlatformTest(orderId, body)
@@ -1116,7 +1114,7 @@ func (suite *OrderTestSuite) Test_GetReceipt_Ok() {
 
 	bill := &billMock.BillingService{}
 	bill.On("OrderReceipt", mock2.Anything, mock2.Anything).
-		Return(&grpc.OrderReceiptResponse{Status: pkg.ResponseStatusOk}, nil)
+		Return(&billing.OrderReceiptResponse{Status: billing.ResponseStatusOk}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeGetReceiptTest(orderId, receiptId)
@@ -1164,11 +1162,11 @@ func (suite *OrderTestSuite) Test_GetReceipt_BillingReturnError() {
 func (suite *OrderTestSuite) Test_GetReceipt_BillingResponseStatusError() {
 	orderId := uuid.New().String()
 	receiptId := uuid.New().String()
-	msg := &grpc.ResponseErrorMessage{Message: "error", Code: "code"}
+	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 
 	bill := &billMock.BillingService{}
 	bill.On("OrderReceipt", mock2.Anything, mock2.Anything).
-		Return(&grpc.OrderReceiptResponse{Status: pkg.ResponseStatusBadData, Message: msg}, nil)
+		Return(&billing.OrderReceiptResponse{Status: billing.ResponseStatusBadData, Message: msg}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeGetReceiptTest(orderId, receiptId)
@@ -1198,7 +1196,7 @@ func (suite *OrderTestSuite) Test_GetOrderForPaylink_Ok() {
 	bill := &billMock.BillingService{}
 	bill.On("IncrPaylinkVisits", mock2.Anything, mock2.Anything).Return(nil, nil)
 	bill.On("OrderCreateByPaylink", mock2.Anything, mock2.Anything).
-		Return(&grpc.OrderCreateProcessResponse{Status: pkg.ResponseStatusOk, Item: &billing.Order{Uuid: "fbd3036f-0f1c-4e98-b71c-d4cd61213f90"}}, nil)
+		Return(&billing.OrderCreateProcessResponse{Status: billing.ResponseStatusOk, Item: &billing.Order{Uuid: "fbd3036f-0f1c-4e98-b71c-d4cd61213f90"}}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeGetOrderForPaylinkTest(id)
@@ -1218,7 +1216,7 @@ func (suite *OrderTestSuite) Test_GetOrderForPaylink_Ok_WithGORutineIsFalse() {
 	bill := &billMock.BillingService{}
 	bill.On("IncrPaylinkVisits", mock2.Anything, mock2.Anything).Return(nil, errors.New("error"))
 	bill.On("OrderCreateByPaylink", mock2.Anything, mock2.Anything).
-		Return(&grpc.OrderCreateProcessResponse{Status: pkg.ResponseStatusOk, Item: &billing.Order{Uuid: "fbd3036f-0f1c-4e98-b71c-d4cd61213f90"}}, nil)
+		Return(&billing.OrderCreateProcessResponse{Status: billing.ResponseStatusOk, Item: &billing.Order{Uuid: "fbd3036f-0f1c-4e98-b71c-d4cd61213f90"}}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeGetOrderForPaylinkTest(id)
@@ -1254,7 +1252,7 @@ func (suite *OrderTestSuite) Test_GetOrderForPaylink_BillingResponseStatusError(
 	bill := &billMock.BillingService{}
 	bill.On("IncrPaylinkVisits", mock2.Anything, mock2.Anything).Return(nil, nil)
 	bill.On("OrderCreateByPaylink", mock2.Anything, mock2.Anything).
-		Return(&grpc.OrderCreateProcessResponse{Status: pkg.ResponseStatusSystemError}, nil)
+		Return(&billing.OrderCreateProcessResponse{Status: billing.ResponseStatusSystemError}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeGetOrderForPaylinkTest(id)
@@ -1273,7 +1271,7 @@ func (suite *OrderTestSuite) Test_GetOrderForPaylink_InvalidFormUrlMask() {
 	bill := &billMock.BillingService{}
 	bill.On("IncrPaylinkVisits", mock2.Anything, mock2.Anything).Return(nil, nil)
 	bill.On("OrderCreateByPaylink", mock2.Anything, mock2.Anything).
-		Return(&grpc.OrderCreateProcessResponse{Status: pkg.ResponseStatusOk, Item: &billing.Order{Uuid: "uuid"}}, nil)
+		Return(&billing.OrderCreateProcessResponse{Status: billing.ResponseStatusOk, Item: &billing.Order{Uuid: "uuid"}}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	suite.router.cfg.OrderInlineFormUrlMask = string([]byte{0x7f})

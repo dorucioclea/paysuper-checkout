@@ -1,7 +1,7 @@
 package common
 
 import (
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/grpc"
+	grpc "github.com/paysuper/paysuper-proto/go/billingpb"
 )
 
 // NewManagementApiResponseError

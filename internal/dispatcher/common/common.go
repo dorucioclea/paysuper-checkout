@@ -4,8 +4,7 @@ import (
 	"github.com/ProtocolONE/go-core/v2/pkg/logger"
 	"github.com/ProtocolONE/go-core/v2/pkg/provider"
 	"github.com/labstack/echo/v4"
-	"github.com/paysuper/paysuper-billing-server/pkg"
-	billingService "github.com/paysuper/paysuper-billing-server/pkg/proto/grpc"
+	billing "github.com/paysuper/paysuper-proto/go/billingpb"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 )
@@ -60,7 +59,7 @@ type Validator interface {
 
 // Services
 type Services struct {
-	Billing billingService.BillingService
+	Billing billing.BillingService
 }
 
 // Handlers
@@ -86,7 +85,7 @@ func (h HandlerSet) BindAndValidate(req interface{}, ctx echo.Context) *echo.HTT
 
 // SrvCallHandler returns error if present, otherwise response as JSON with 200 OK
 func (h HandlerSet) SrvCallHandler(req interface{}, err error, name, method string) *echo.HTTPError {
-	h.AwareSet.L().Error(pkg.ErrorGrpcServiceCallFailed,
+	h.AwareSet.L().Error(billing.ErrorGrpcServiceCallFailed,
 		logger.PairArgs(
 			ErrorFieldService, name,
 			ErrorFieldMethod, method,

@@ -3,11 +3,10 @@ package handlers
 import (
 	"errors"
 	"github.com/labstack/echo/v4"
-	"github.com/paysuper/paysuper-billing-server/pkg"
-	billMock "github.com/paysuper/paysuper-billing-server/pkg/mocks"
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/grpc"
 	"github.com/paysuper/paysuper-checkout/internal/dispatcher/common"
 	"github.com/paysuper/paysuper-checkout/internal/test"
+	billing "github.com/paysuper/paysuper-proto/go/billingpb"
+	billMock "github.com/paysuper/paysuper-proto/go/billingpb/mocks"
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -61,7 +60,7 @@ func (suite *PaymentTestSuite) Test_ProcessCreatePayment_Ok() {
 
 	bill := &billMock.BillingService{}
 	bill.On("PaymentCreateProcess", mock2.Anything, mock2.Anything).
-		Return(&grpc.PaymentCreateResponse{Status: pkg.ResponseStatusOk, RedirectUrl: "url", NeedRedirect: true}, nil)
+		Return(&billing.PaymentCreateResponse{Status: billing.ResponseStatusOk, RedirectUrl: "url", NeedRedirect: true}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeProcessCreatePaymentTest(body)
@@ -107,11 +106,11 @@ func (suite *PaymentTestSuite) Test_ProcessCreatePayment_BillingReturnError() {
 
 func (suite *PaymentTestSuite) Test_ProcessCreatePayment_BillingResponseStatusError() {
 	body := `{}`
-	msg := &grpc.ResponseErrorMessage{Message: "error", Code: "code"}
+	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 
 	bill := &billMock.BillingService{}
 	bill.On("PaymentCreateProcess", mock2.Anything, mock2.Anything).
-		Return(&grpc.PaymentCreateResponse{Status: pkg.ResponseStatusBadData, Message: msg}, nil)
+		Return(&billing.PaymentCreateResponse{Status: billing.ResponseStatusBadData, Message: msg}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeProcessCreatePaymentTest(body)

@@ -4,11 +4,10 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/paysuper/paysuper-billing-server/pkg"
-	billMock "github.com/paysuper/paysuper-billing-server/pkg/mocks"
-	"github.com/paysuper/paysuper-billing-server/pkg/proto/grpc"
 	"github.com/paysuper/paysuper-checkout/internal/dispatcher/common"
 	"github.com/paysuper/paysuper-checkout/internal/test"
+	billing "github.com/paysuper/paysuper-proto/go/billingpb"
+	billMock "github.com/paysuper/paysuper-proto/go/billingpb/mocks"
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -60,7 +59,7 @@ func (suite *CountryTestSuite) Test_GetPaymentCountries_Ok() {
 
 	bill := &billMock.BillingService{}
 	bill.On("GetCountriesListForOrder", mock2.Anything, mock2.Anything).
-		Return(&grpc.GetCountriesListForOrderResponse{Status: pkg.ResponseStatusOk}, nil)
+		Return(&billing.GetCountriesListForOrderResponse{Status: billing.ResponseStatusOk}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeGetPaymentCountriesTest(orderId)
@@ -105,11 +104,11 @@ func (suite *CountryTestSuite) Test_GetPaymentCountries_BillingReturnError() {
 
 func (suite *CountryTestSuite) Test_GetPaymentCountries_BillingResponseStatusError() {
 	orderId := uuid.New().String()
-	msg := &grpc.ResponseErrorMessage{Message: "error", Code: "code"}
+	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 
 	bill := &billMock.BillingService{}
 	bill.On("GetCountriesListForOrder", mock2.Anything, mock2.Anything).
-		Return(&grpc.GetCountriesListForOrderResponse{Status: pkg.ResponseStatusBadData, Message: msg}, nil)
+		Return(&billing.GetCountriesListForOrderResponse{Status: billing.ResponseStatusBadData, Message: msg}, nil)
 	suite.router.dispatch.Services.Billing = bill
 
 	res, err := suite.executeGetPaymentCountriesTest(orderId)
