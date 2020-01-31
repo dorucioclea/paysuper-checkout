@@ -61,7 +61,7 @@ func (suite *RecurringTestSuite) executeRemoveSavedCardTest(body string, cookie 
 func (suite *RecurringTestSuite) Test_RemoveSavedCard_Ok() {
 	body := `{"id": "ffffffffffffffffffffffff"}`
 	cookie := new(http.Cookie)
-	cookie.Name = common.CustomerTokenCookiesName
+	cookie.Name = suite.router.cfg.CookieName
 	cookie.Value = bson.NewObjectId().Hex()
 	cookie.Expires = time.Now().Add(time.Duration(suite.router.cfg.CustomerTokenCookiesLifetimeHours) * time.Second)
 	cookie.HttpOnly = true
@@ -81,7 +81,7 @@ func (suite *RecurringTestSuite) Test_RemoveSavedCard_Ok() {
 func (suite *RecurringTestSuite) Test_RemoveSavedCard_BindError() {
 	body := `<some_string>`
 	cookie := new(http.Cookie)
-	cookie.Name = common.CustomerTokenCookiesName
+	cookie.Name = suite.router.cfg.CookieName
 	cookie.Value = bson.NewObjectId().Hex()
 	cookie.Expires = time.Now().Add(time.Duration(suite.router.cfg.CustomerTokenCookiesLifetimeHours) * time.Second)
 	cookie.HttpOnly = true
@@ -100,7 +100,7 @@ func (suite *RecurringTestSuite) Test_RemoveSavedCard_BindError() {
 func (suite *RecurringTestSuite) Test_RemoveSavedCard_ValidationError() {
 	body := `{"id": "string"}`
 	cookie := new(http.Cookie)
-	cookie.Name = common.CustomerTokenCookiesName
+	cookie.Name = suite.router.cfg.CookieName
 	cookie.Value = bson.NewObjectId().Hex()
 	cookie.Expires = time.Now().Add(time.Duration(suite.router.cfg.CustomerTokenCookiesLifetimeHours) * time.Second)
 	cookie.HttpOnly = true
@@ -119,7 +119,7 @@ func (suite *RecurringTestSuite) Test_RemoveSavedCard_ValidationError() {
 func (suite *RecurringTestSuite) Test_RemoveSavedCard_BillingReturnError() {
 	body := `{"id": "ffffffffffffffffffffffff"}`
 	cookie := new(http.Cookie)
-	cookie.Name = common.CustomerTokenCookiesName
+	cookie.Name = suite.router.cfg.CookieName
 	cookie.Value = bson.NewObjectId().Hex()
 	cookie.Expires = time.Now().Add(time.Duration(suite.router.cfg.CustomerTokenCookiesLifetimeHours) * time.Second)
 	cookie.HttpOnly = true
@@ -144,7 +144,7 @@ func (suite *RecurringTestSuite) Test_RemoveSavedCard_BillingResponseStatusError
 	body := `{"id": "ffffffffffffffffffffffff"}`
 	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 	cookie := new(http.Cookie)
-	cookie.Name = common.CustomerTokenCookiesName
+	cookie.Name = suite.router.cfg.CookieName
 	cookie.Value = bson.NewObjectId().Hex()
 	cookie.Expires = time.Now().Add(time.Duration(suite.router.cfg.CustomerTokenCookiesLifetimeHours) * time.Second)
 	cookie.HttpOnly = true

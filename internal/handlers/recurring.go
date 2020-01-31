@@ -47,7 +47,7 @@ func (h *RecurringRoute) Route(groups *common.Groups) {
 // @router /api/v1/saved_card [delete]
 func (h *RecurringRoute) removeSavedCard(ctx echo.Context) error {
 	req := &billing.DeleteSavedCardRequest{
-		Cookie: helpers.GetRequestCookie(ctx, common.CustomerTokenCookiesName),
+		Cookie: helpers.GetRequestCookie(ctx, h.cfg.CookieName),
 	}
 
 	if err := h.dispatch.BindAndValidate(req, ctx); err != nil {

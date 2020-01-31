@@ -279,7 +279,7 @@ func (suite *OrderTestSuite) executeGetPaymentFormDataTest(orderId string, cooki
 func (suite *OrderTestSuite) Test_GetPaymentFormData_Ok() {
 	orderId := uuid.New().String()
 	cookie := new(http.Cookie)
-	cookie.Name = common.CustomerTokenCookiesName
+	cookie.Name = suite.router.cfg.CookieName
 	cookie.Value = "ffffffffffffffffffffffff"
 	cookie.Expires = time.Now().Add(time.Duration(suite.router.cfg.CustomerTokenCookiesLifetimeHours) * time.Second)
 	cookie.HttpOnly = true
@@ -300,7 +300,7 @@ func (suite *OrderTestSuite) Test_GetPaymentFormData_Ok() {
 func (suite *OrderTestSuite) Test_GetPaymentFormData_OrderValidationError() {
 	orderId := "some_value"
 	cookie := new(http.Cookie)
-	cookie.Name = common.CustomerTokenCookiesName
+	cookie.Name = suite.router.cfg.CookieName
 	cookie.Value = "ffffffffffffffffffffffff"
 	cookie.Expires = time.Now().Add(time.Duration(suite.router.cfg.CustomerTokenCookiesLifetimeHours) * time.Second)
 	cookie.HttpOnly = true
@@ -319,7 +319,7 @@ func (suite *OrderTestSuite) Test_GetPaymentFormData_OrderValidationError() {
 func (suite *OrderTestSuite) Test_GetPaymentFormData_BillingReturnError() {
 	orderId := uuid.New().String()
 	cookie := new(http.Cookie)
-	cookie.Name = common.CustomerTokenCookiesName
+	cookie.Name = suite.router.cfg.CookieName
 	cookie.Value = "ffffffffffffffffffffffff"
 	cookie.Expires = time.Now().Add(time.Duration(suite.router.cfg.CustomerTokenCookiesLifetimeHours) * time.Second)
 	cookie.HttpOnly = true
@@ -344,7 +344,7 @@ func (suite *OrderTestSuite) Test_GetPaymentFormData_BillingResponseStatusError(
 	orderId := uuid.New().String()
 	msg := &billing.ResponseErrorMessage{Message: "error", Code: "code"}
 	cookie := new(http.Cookie)
-	cookie.Name = common.CustomerTokenCookiesName
+	cookie.Name = suite.router.cfg.CookieName
 	cookie.Value = "ffffffffffffffffffffffff"
 	cookie.Expires = time.Now().Add(time.Duration(suite.router.cfg.CustomerTokenCookiesLifetimeHours) * time.Second)
 	cookie.HttpOnly = true

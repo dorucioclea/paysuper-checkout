@@ -27,8 +27,6 @@ const (
 	HeaderXApiSignatureHeader = "X-API-SIGNATURE"
 	HeaderReferer             = "referer"
 
-	CustomerTokenCookiesName = "_ps_ctkn"
-
 	ErrorFieldService = "service"
 	ErrorFieldMethod  = "method"
 	ErrorFieldRequest = "request"

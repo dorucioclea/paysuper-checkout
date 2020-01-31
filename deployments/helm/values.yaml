@@ -29,6 +29,7 @@ backend:
     - ORDER_INLINE_FORM_URL_MASK
     - COOKIE_DOMAIN
     - ALLOW_ORIGIN
+    - COOKIE_NAME
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

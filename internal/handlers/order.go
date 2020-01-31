@@ -103,7 +103,7 @@ func (h *OrderRoute) createJson(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, common.ErrorRequestParamsIncorrect)
 	}
 
-	req.Cookie = helpers.GetRequestCookie(ctx, common.CustomerTokenCookiesName)
+	req.Cookie = helpers.GetRequestCookie(ctx, h.cfg.CookieName)
 
 	if err := h.dispatch.Validate.Struct(req); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, common.GetValidationError(err))
@@ -181,7 +181,7 @@ func (h *OrderRoute) getPaymentFormData(ctx echo.Context) error {
 		Locale:  ctx.Request().Header.Get(common.HeaderAcceptLanguage),
 		Ip:      ctx.RealIP(),
 		Referer: ctx.Request().Header.Get(common.HeaderReferer),
-		Cookie:  helpers.GetRequestCookie(ctx, common.CustomerTokenCookiesName),
+		Cookie:  helpers.GetRequestCookie(ctx, h.cfg.CookieName),
 	}
 
 	h.dispatch.AwareSet.L().Info(
@@ -204,7 +204,7 @@ func (h *OrderRoute) getPaymentFormData(ctx echo.Context) error {
 	}
 
 	expire := time.Now().Add(time.Duration(h.cfg.CustomerTokenCookiesLifetimeHours) * time.Hour)
-	helpers.SetResponseCookie(ctx, common.CustomerTokenCookiesName, res.Cookie, h.cfg.CookieDomain, expire)
+	helpers.SetResponseCookie(ctx, h.cfg.CookieName, res.Cookie, h.cfg.CookieDomain, expire)
 
 	return ctx.JSON(http.StatusOK, res.Item)
 }
@@ -334,7 +334,7 @@ func (h *OrderRoute) changeCustomer(ctx echo.Context) error {
 // @router /api/v1/orders/{order_id}/billing_address [post]
 func (h *OrderRoute) processBillingAddress(ctx echo.Context) error {
 	req := &billing.ProcessBillingAddressRequest{
-		Cookie: helpers.GetRequestCookie(ctx, common.CustomerTokenCookiesName),
+		Cookie: helpers.GetRequestCookie(ctx, h.cfg.CookieName),
 		Ip:     ctx.RealIP(),
 	}
 
@@ -353,7 +353,7 @@ func (h *OrderRoute) processBillingAddress(ctx echo.Context) error {
 	}
 
 	expire := time.Now().Add(time.Duration(h.cfg.CustomerTokenCookiesLifetimeHours) * time.Hour)
-	helpers.SetResponseCookie(ctx, common.CustomerTokenCookiesName, res.Cookie, h.cfg.CookieDomain, expire)
+	helpers.SetResponseCookie(ctx, h.cfg.CookieName, res.Cookie, h.cfg.CookieDomain, expire)
 
 	return ctx.JSON(http.StatusOK, res.Item)
 }
@@ -517,7 +517,7 @@ func (h *OrderRoute) getOrderForPaylink(ctx echo.Context) error {
 		UtmMedium:   qParams.Get(common.QueryParameterNameUtmMedium),
 		UtmCampaign: qParams.Get(common.QueryParameterNameUtmCampaign),
 		IsEmbedded:  false,
-		Cookie:      helpers.GetRequestCookie(ctx, common.CustomerTokenCookiesName),
+		Cookie:      helpers.GetRequestCookie(ctx, h.cfg.CookieName),
 	}
 
 	res, err := h.dispatch.Services.Billing.OrderCreateByPaylink(ctx.Request().Context(), req)

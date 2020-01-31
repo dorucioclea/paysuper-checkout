@@ -2,6 +2,7 @@ package common
 
 type Config struct {
 	CookieDomain string `envconfig:"COOKIE_DOMAIN" required:"true"`
+	CookieName   string `envconfig:"COOKIE_NAME" default:"_ps_ctkn"`
 	AllowOrigin  string `envconfig:"ALLOW_ORIGIN" default:"*"`
 
 	// OrderInlineFormUrlMask url like a https://checkout.tst.pay.super.com/pay/order/
